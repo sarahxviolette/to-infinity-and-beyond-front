@@ -1,0 +1,19 @@
+/* Common styles */
+.stApp{
+  background-color: #272F47;
+}
+h1{
+  color: white !important;
+}
+
+p {
+  color: #FFFFFF;
+}
+/* Sidebar style */
+.eczjsme8{
+  background-color: #FFFFFF;
+  color: #272F47;
+}
+.eczjsme8 h1{
+  color: #272F47;
+}
