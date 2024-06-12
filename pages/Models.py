@@ -2,6 +2,7 @@ import streamlit as st
 import requests as rq
 import streamlit.components.v1 as components
 import base64
+import time
 
 st.set_page_config(
      page_title='To infinity and beyond 🚀',
@@ -31,9 +32,9 @@ def predict(number):
     if isinstance(number, float):
         st.success('Success message')
         if number < 0.1:
-            st.write("STAR")
+            st.markdown("This is a **STAR**")
         else:
-            st.write("GALAXY")
+            st.markdown("This is a **GALAXY**")
     else:
         st.error("Error please retry")
 
@@ -99,14 +100,17 @@ with images:
             img_cel = st.image(celestial)
             submit = st.button("Run")
             if submit:
-                col2.write("lol")
-                img_bytes = celestial.getvalue()
-                api_url = 'https://to-inifinity-and-beyond-image-01-wnxzahsyha-ew.a.run.app/predict_from_image'
-                res = rq.post(api_url, files={'file': img_bytes}).json()
+                # Show a spinner during a process
+                with col2:
+                        with st.spinner(text='In progress'):
+                            img_bytes = celestial.getvalue()
+                            api_url = 'https://to-inifinity-and-beyond-image-01-wnxzahsyha-ew.a.run.app/category_from_image'
+                            res = rq.post(api_url, files={'file': img_bytes}).json()
+                            time.sleep(3)
+                            print(res['prediction'])
+                            st.write('done')
+                            col2.write(predict(res['prediction']))
 
-                col2.write(predict(res['prediction']))
-                # col2.write(res.json['prediction'])
-                #st.write(r.json.prediction)
 
 with tabular:
     st.title('StarTable 🌌')
