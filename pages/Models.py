@@ -30,14 +30,12 @@ def set_background(png_file):
 def predict(number):
     if isinstance(number, float):
         st.success('Success message')
-        if (1 - number) > 0.9:
+        if number < 0.1:
             st.write("STAR")
-            st.write(f"{1-number}")
         else:
             st.write("GALAXY")
-            st.write(f"{1-number}")
     else:
-        st.error("ERROR")
+        st.error("Error please retry")
 
 
 set_background('./static/galaxy.png')
@@ -92,16 +90,23 @@ images, tabular = st.tabs(["StellarSnap", "StarTable"])
 with images:
     st.title('StellarSnap 🚀')
     col1, col2 = st.columns(2)
+    submit = False
+    col2.subheader("Predict")
     with col1:
         st.subheader("Upload")
-        celestial = st.file_uploader("Upload your image",['jpeg'])
+        celestial = st.file_uploader("Upload your image",['jpeg'], accept_multiple_files=False)
         if celestial:
-            st.image(celestial)
+            img_cel = st.image(celestial)
             submit = st.button("Run")
-    with col2:
-        st.subheader("Predict")
+            if submit:
+                col2.write("lol")
+                img_bytes = celestial.getvalue()
+                api_url = 'https://to-inifinity-and-beyond-image-01-wnxzahsyha-ew.a.run.app/predict_from_image'
+                res = rq.post(api_url, files={'file': img_bytes}).json()
 
-        predict(0.43)
+                col2.write(predict(res['prediction']))
+                # col2.write(res.json['prediction'])
+                #st.write(r.json.prediction)
 
 with tabular:
     st.title('StarTable 🌌')
@@ -110,12 +115,3 @@ with tabular:
         st.write("test")
     with col2_tab:
         st.write("display pred")
-
-# submit = st.button('go')
-# if submit:
-#     api_url = 'https://to-inifinity-and-beyond-image-01-wnxzahsyha-ew.a.run.app/predict_from_image'
-#     api_params = {
-#     }
-#     r = rq.post(api_url, api_params)
-#     #r.status_code
-#     r.text
