@@ -4,6 +4,7 @@ import streamlit.components.v1 as components
 import base64
 import time
 
+
 st.set_page_config(
      page_title='To infinity and beyond 🚀',
      layout="wide",
@@ -38,6 +39,10 @@ def predict(number):
     else:
         st.error("Error please retry")
 
+
+def calc_velocity(redshift):
+    c = 299792
+    return f'{redshift * c} km/s'
 
 set_background('./static/galaxy.png')
 
@@ -87,7 +92,6 @@ st.html(code)
 images, tabular = st.tabs(["StellarSnap", "StarTable"])
 
 
-
 with images:
     st.title('StellarSnap 🚀')
     col1, col2 = st.columns(2)
@@ -105,11 +109,13 @@ with images:
                         with st.spinner(text='In progress'):
                             img_bytes = celestial.getvalue()
                             api_url = 'https://to-inifinity-and-beyond-image-01-wnxzahsyha-ew.a.run.app/category_from_image'
+                            api_url_rs = 'https://to-inifinity-and-beyond-image-01-wnxzahsyha-ew.a.run.app/redshift_from_image'
                             res = rq.post(api_url, files={'file': img_bytes}).json()
+                            res_rs = rq.post(api_url_rs, files={'file': img_bytes}).json()
                             time.sleep(3)
-                            print(res['prediction'])
-                            st.write('done')
                             col2.write(predict(res['prediction']))
+                            col2.write(calc_velocity(res_rs['prediction']))
+
 
 
 with tabular:
