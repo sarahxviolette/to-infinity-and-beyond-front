@@ -3,12 +3,13 @@ import requests as rq
 import streamlit.components.v1 as components
 import base64
 import pandas as pd
+import time
 
 
 st.set_page_config(
      page_title='To infinity and beyond 🚀',
      layout="wide",
-     initial_sidebar_state="expanded",
+     initial_sidebar_state="collapsed",
 )
 
 base_uri = "https://to-inifinity-and-beyond-image-01-wnxzahsyha-ew.a.run.app/"
@@ -31,31 +32,38 @@ def set_background(png_file):
     ''' % bin_str
     st.html(page_bg_img)
 
-def predict(number):
+def display_model_name(model_name):
+    return f'{str(model_name).capitalize()} is running. 🦿'
+
+def predict_class(number):
+    out = ""
     if isinstance(number, float):
         st.success('Processing complete')
-        if number < 0.1:
-            st.markdown("This is a **STAR**")
-        else:
-            st.markdown("This is a **GALAXY**")
-    else:
-        st.error("Error please retry")
+        out = "STAR ✨" if number < 0.1 else "GALAXY 🌌"
+    return out
 
+def display_redshift(z):
+    return f'The predicted redshift value is {z}'
 
 def calc_velocity(z):
     c = 299792.458
     #return f'Traveling at {round(z * c, 2)} km/s'
-    return f'{round(z * c, 2)}'
+    return round(z * c, 2)
 
 def calc_distance_earth_obj(V):
     V = float(V)
     H0 = 73
     Mpc = 3.26
     d = V/H0
-    return f'{round(d * Mpc)} million-years away from us'
+    return round(d * Mpc)
+
+def display_prediction(classif, v):
+    print(classif,v,predict_class(classif),calc_velocity(v),calc_distance_earth_obj(v))
+    return st.write(f'This is a **{classif}**! Traveling at **{calc_velocity(v):,}** km/s and being **{calc_distance_earth_obj(v):,}** million-years away from us.')
+
 
 def get_random_data_for_tabular():
-    datum = pd.read_csv('./data/sample_data.csv')
+    datum = pd.read_csv('./data/MF.csv')
     return datum.sample()
 
 set_background('./static/galaxy.png')
@@ -64,6 +72,14 @@ code = """
 <style>
     h1, h3 {
         color: white;
+    }
+
+    h1 {
+        font-size: 4.5em;
+    }
+
+    h3 {
+        font-size: 3.25em;
     }
 
     p {
@@ -91,12 +107,16 @@ code = """
 
     .e1b2p2ww7 {
         color: white;
+        display: none;
     }
 
     .stButton p {
         color: #272F47;
     }
 
+    .e1nzilvr4 p {
+        font-size: 1.8em;
+    }
 
 
 </style>
@@ -120,24 +140,19 @@ with images:
             if submit:
                 # Show a spinner during a process
                 with col2:
-                        with st.spinner(text='Image processing in progress'):
+                        with st.spinner(text='R2D2 & Murphy models are working 🔧'):
                             img_bytes = celestial.getvalue()
                             api_url = base_uri + 'category_from_image'
                             api_url_rs = base_uri + 'redshift_from_image'
                             res = rq.post(api_url, files={'file': img_bytes}).json()
                             res_rs = rq.post(api_url_rs, files={'file': img_bytes}).json()
-                            classif = predict(res['prediction'])
-                            col2.write(classif)
+                            classif = predict_class(res['prediction'])
                             V = calc_velocity(res_rs['prediction'])
-                            col2.write(V)
-                            col2.write(calc_distance_earth_obj(V))
+                            col2.write(display_prediction(classif, V))
 
 
 filling_data = get_random_data_for_tabular()
-print(filling_data.g.all)
-print(filling_data.u.values)
-print(filling_data.i.values)
-print(filling_data.class_obj.values)
+
 with tabular:
     st.title('StarTable 🌌')
     col1_tab, col2_tab = st.columns(2)
@@ -146,7 +161,7 @@ with tabular:
         form = st.form(key="tabular_data")
         alpha = form.text_input('Alpha',filling_data.alpha.values[0])
         delta = form.text_input('Delta',filling_data.delta.values[0])
-        classif = form.text_input('Class',filling_data.class_obj.values[0])
+        classif = form.text_input('Class',filling_data.label.values[0])
         uv = form.text_input('Ultraviolet Filter',filling_data.u.values[0])
         gf = form.text_input('Green Filter',filling_data.g.values[0])
         rf = form.text_input('Red Filter',filling_data.r.values[0])
@@ -168,5 +183,27 @@ with tabular:
                 'z':irf,
             }
             api_url_tab = base_uri + "redshift_from_params"
-            with st.spinner(text='Image processing in progress'):
+            with st.spinner(text='Chewbacca is working 🐻'):
                 res_from_params = rq.get(api_url_tab, api_params).json()
+                st.write(display_redshift(res_from_params['prediction']))
+
+with millenium:
+    st.title('MilleniumSnap🌌')
+    col1_fc, col2_fc = st.columns(2)
+    with col1_fc:
+        st.subheader('Fill and upload your data ✍️')
+
+        form_fc = st.form(key="hybrid_data")
+        celestial_fc = form_fc.file_uploader("Upload your image",['jpeg'], accept_multiple_files=False)
+        alpha_fc = form_fc.text_input('Alpha',filling_data.alpha.values[0])
+        delta_fc = form_fc.text_input('Delta',filling_data.delta.values[0])
+        classif_fc = form_fc.text_input('Class',filling_data.label.values[0])
+        uv_fc = form_fc.text_input('Ultraviolet Filter',filling_data.u.values[0])
+        gf_fc = form_fc.text_input('Green Filter',filling_data.g.values[0])
+        rf_fc = form_fc.text_input('Red Filter',filling_data.r.values[0])
+        nf_fc = form_fc.text_input('Near Infrared Filter',filling_data.i.values[0])
+        irf_fc = form_fc.text_input('Infrared Filter',filling_data.z.values[0])
+        submit_st_fc = form_fc.form_submit_button("Run")
+
+    with col2_fc:
+        st.subheader("Predictions")
