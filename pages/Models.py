@@ -132,7 +132,7 @@ with images:
     st.title('StellarSnap 🚀')
     col1, col2 = st.columns(2)
     submit = False
-    col2.subheader("Predict")
+    col2.subheader("Predictions")
     with col1:
         st.subheader("Upload")
         celestial = st.file_uploader("Upload your image",['jpeg'], accept_multiple_files=False)
@@ -210,7 +210,7 @@ with millenium:
         submit_st_fc = form_fc.form_submit_button("Run")
 
     with col2_fc:
-        st.subheader("Predictions")
+        st.subheader("Prediction")
         api_url_millenium = base_uri + 'redshift_from_image_and_params'
         if submit_st_fc:
             with st.spinner(text='Millenium Falcon model is working 🛸'):
