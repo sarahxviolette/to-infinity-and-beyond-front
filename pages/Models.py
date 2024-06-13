@@ -47,7 +47,6 @@ def display_redshift(z):
 
 def calc_velocity(z):
     c = 299792.458
-    #return f'Traveling at {round(z * c, 2)} km/s'
     return round(z * c, 2)
 
 def calc_distance_earth_obj(V):
